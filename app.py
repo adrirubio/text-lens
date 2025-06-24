@@ -25,6 +25,10 @@ quotes = [
     '"Facts are stubborn things." - John Adams'
 ]
 
+def fade_in_label(label, text, delay=40):
+    for i in range(len(text)):
+        window.after(i * delay, lambda i=i: label.config(text=text[:i+1]))
+
 # Main window setup
 window = tk.Tk()
 window.title("Text Lens")
@@ -41,9 +45,9 @@ text_font = tkFont.Font(family="Helvetica", size=14)
 # One stretching column
 window.grid_columnconfigure(0, weight=1)
 
-row0 = tk.Frame(window, bg="RoyalBlue2")
-row0.grid(row=0, column=0, sticky="ew")
-row0.grid_columnconfigure(0, weight=1)
+quote_frame = tk.Frame(window, bg="RoyalBlue2")
+quote_frame.grid(row=0, column=0, sticky="ew")
+quote_frame.grid_columnconfigure(0, weight=1)
 
 # Quote
 random_quote = random.choice(quotes)
@@ -51,9 +55,10 @@ random_quote = random.choice(quotes)
 before_dash, dash, after_dash = random_quote.partition('-')
 quote_text = before_dash
 author = after_dash
+author_text = f"- {author}"
 
-row_quote = tk.Frame(row0, bg="RoyalBlue2")
-row_quote.grid(row=1, column=0, sticky="ew")
+row_quote = tk.Frame(quote_frame, bg="RoyalBlue2")
+row_quote.grid(row=0, column=0, sticky="ew")
 row_quote.grid_columnconfigure(0, weight=1)
 
 # Quote label
@@ -67,15 +72,54 @@ quote = tk.Label(
     justify="center"
 )
 quote.grid(row=0, column=0, sticky="n", pady=10)
+fade_in_label(quote, quote_text)
 
 # Author label
 author = tk.Label(
     row_quote,
-    text=f"- {author}",
+    text=author_text,
     fg="white",
     bg="RoyalBlue2",
     font=author_font
 )
-author.grid(row=1, column=0, sticky="n")
+author.grid(row=1, column=0, sticky="n", padx=5, pady=(0, 15))
+fade_in_label(author, author_text)
+
+# Text input box
+input_frame = tk.Frame(window, bg="grey20")
+input_frame.grid(row=1, column=0, sticky="new", padx=20, pady=(0, 20))
+input_frame.grid_columnconfigure(0, weight=1)
+input_frame.grid_rowconfigure(1, weight=1)
+
+input_lbl = tk.Label(
+    input_frame,
+    text="📝 Paste your text here for analysis:",
+    fg="white",
+    bg="grey20",
+    font=text_font
+)
+input_lbl.grid(row=0, column=0, columnspan=2, sticky="n", pady=15)
+
+input_box = tk.Text(
+    input_frame,
+    font=text_font,
+    wrap="word",
+    bd=7,
+    relief="groove",
+    bg="grey63",
+    fg="black",
+    height=15
+)
+input_box.grid(row=1, column=0, sticky="ew")
+
+scroll = tk.Scrollbar(
+    input_frame,
+    orient="vertical",
+    command=input_box.yview
+)
+scroll.grid(row=1, column=1, sticky="ns")
+
+input_box.config(yscrollcommand=scroll.set)
 
 window.mainloop()
+
