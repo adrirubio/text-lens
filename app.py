@@ -3,6 +3,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
+import random
 
 quotes = [
     '"I think, therefore I am ." - René Descartes',
@@ -32,13 +33,49 @@ window.configure(bg="grey20")
 window.resizable(False, False)
 
 # Fonts
-quotes_font = tkFont.Font(family="Crimson Text", size=16, slant="italic")
-title_font = tkFont.Font(family="Times", size="27", weight="bold")
+quote_font = tkFont.Font(family="Crimson Text", size=23, slant="italic")
+author_font = tkFont.Font(family="Times", size=17, weight="bold")
+title_font = tkFont.Font(family="Times", size=27, weight="bold")
 text_font = tkFont.Font(family="Helvetica", size=14)
 
-# Grid
-window.grid_columnfigure(0, weight=1)
+# One stretching column
+window.grid_columnconfigure(0, weight=1)
 
+row0 = tk.Frame(window, bg="RoyalBlue2")
+row0.grid(row=0, column=0, sticky="ew")
+row0.grid_columnconfigure(0, weight=1)
 
+# Quote
+random_quote = random.choice(quotes)
+
+before_dash, dash, after_dash = random_quote.partition('-')
+quote_text = before_dash
+author = after_dash
+
+row_quote = tk.Frame(row0, bg="RoyalBlue2")
+row_quote.grid(row=1, column=0, sticky="ew")
+row_quote.grid_columnconfigure(0, weight=1)
+
+# Quote label
+quote = tk.Label(
+    row_quote,
+    text=quote_text,
+    fg="white",
+    bg="RoyalBlue2",
+    font=quote_font,
+    wraplength=840,
+    justify="center"
+)
+quote.grid(row=0, column=0, sticky="n", pady=10)
+
+# Author label
+author = tk.Label(
+    row_quote,
+    text=f"- {author}",
+    fg="white",
+    bg="RoyalBlue2",
+    font=author_font
+)
+author.grid(row=1, column=0, sticky="n")
 
 window.mainloop()
