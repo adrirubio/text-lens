@@ -1,0 +1,8 @@
+text-lens/
+|
+├── .gitignore
+├── pyproject.toml
+├── README.md
+|
+├── app.py
+└── text-lens-logo.png
