@@ -45,6 +45,63 @@ def on_analyze(input_box, response_box, wpm=200):
     response_box.insert("end", f"Unique words: {unique:,} \n")
     response_box.insert("end", f"Est. reading time: {m} min {s:02d} sec\n")
 
+def on_right_click(event):
+    click_win = tk.Toplevel(window)
+    click_win.title("Right click")
+    click_win.geometry("200x100")
+    click_win.configure(bg="#2E2E2E")
+    click_win.resizable(False, False)
+
+    # Grid
+    click_win.grid_columnconfigure(0, weight=1)
+    click_win.grid_columnconfigure(1, weight=1)
+
+    # Copy button
+    copy_btn = tk.Button(
+        click_win,
+        text="Copy",
+        font=button_font,
+        bg="white",
+        fg="black",
+        activebackground="black",
+        activeforeground="white",
+        width=3,
+        height=1,
+        relief="raised",
+        bd=7,
+        command=lambda: on_copy(click_win)
+    )
+    copy_btn.grid(row=0, column=0, pady=30)
+
+    # Paste button
+    paste_btn = tk.Button(
+        click_win,
+        text="Paste",
+        font=button_font,
+        bg="white",
+        fg="black",
+        activebackground="black",
+        activeforeground="white",
+        width=3,
+        height=1,
+        relief="raised",
+        bd=7,
+        cursor="hand2",
+        command=lambda: on_paste(click_win)
+    )
+    paste_btn.grid(row=0, column=1, pady=30)
+
+def on_copy(window):
+    text = input_box.get("1.0", "end-1c")
+    window.clipboard_clear()
+    window.clipboard_append(text)
+    window.destroy()
+
+def on_paste(window):
+    clipboard = window.clipboard_get()
+    input_box.insert("insert", clipboard)
+    window.destroy()
+
 def fade_in_label(label, text, delay=40):
     for i in range(len(text)):
         window.after(i * delay, lambda i=i: label.config(text=text[:i+1]))
@@ -133,6 +190,7 @@ input_box = tk.Text(
     height=15
 )
 input_box.grid(row=1, column=0, sticky="ew")
+input_box.bind("<Button-3>", on_right_click)
 
 scroll = tk.Scrollbar(
     input_frame,
