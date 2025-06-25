@@ -46,9 +46,20 @@ def on_analyze(input_box, response_box, wpm=200):
     response_box.insert("end", f"Est. reading time: {m} min {s:02d} sec\n")
 
 def on_right_click(event):
+    w, h = 200, 100
+    cur_x, cur_y = event.x_root, event.y_root
+    x = cur_x
+    y = cur_y + 20
+
+    # Keep pop up on screen
+    scr_w = window.winfo_screenwidth()
+    scr_h = window.winfo_screenheight()
+    x = max(0 , x)
+    y = min(scr_h - h, y)
+
     click_win = tk.Toplevel(window)
     click_win.title("Right click")
-    click_win.geometry("200x100")
+    click_win.geometry(f"{w}x{h}+{x}+{y}")
     click_win.configure(bg="#2E2E2E")
     click_win.resizable(False, False)
 
