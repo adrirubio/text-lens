@@ -102,6 +102,13 @@ def on_right_click(event):
     )
     paste_btn.grid(row=0, column=1, pady=30)
 
+def on_clear(input_box, output_box):
+    # Remove text inside of input box
+    input_box.delete("1.0", tk.END)
+
+    # Remove text inside of ouput_box
+    output_box.delete("1.0", tk.END)
+
 def on_copy(window):
     text = input_box.get("1.0", "end-1c")
     window.clipboard_clear()
@@ -259,6 +266,53 @@ results_box = tk.Text(
     height=10
 )
 results_box.grid(row=1, column=0, sticky="w", pady=(0, 5), padx=5)
+
+# Clear button
+clear_btn = tk.Button(
+    output_frame,
+    text="Clear",
+    bg="RoyalBlue2",
+    fg="white",
+    activebackground="RoyalBlue3",
+    activeforeground="#2E2E2e",
+    width=10,
+    height=1,
+    relief="raised",
+    bd=7,
+    cursor="hand2",
+    font=button_font,
+    command=lambda: on_clear(input_box, results_box)
+)
+clear_btn.grid(row=1, column=0, sticky="e", padx=220)
+
+# Graph dropdown
+char_var = tk.StringVar(value="Select Chart")
+
+chart_dd = tk.OptionMenu(
+    output_frame,
+    char_var,
+    "Top Words",
+    "Sentences",
+    "Punctuation"
+)
+chart_dd.config(
+    bg="RoyalBlue2",
+    fg="white",
+    activebackground="RoyalBlue3",
+    activeforeground="#2E2E2E",
+    font=button_font,
+    width=10,
+    relief="raised",
+    bd=7
+)
+chart_dd["menu"].config(
+    bg="RoyalBlue2",
+    fg="white",
+    activebackground="RoyalBlue3",
+    activeforeground="white",
+    font=button_font
+)
+chart_dd.grid(row=1, column=0, sticky="e", padx=30)
 
 window.mainloop()
 
