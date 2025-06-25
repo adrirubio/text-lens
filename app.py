@@ -41,9 +41,11 @@ quote_font = tkFont.Font(family="Crimson Text", size=23, slant="italic")
 author_font = tkFont.Font(family="Times", size=17, weight="bold")
 title_font = tkFont.Font(family="Times", size=27, weight="bold")
 text_font = tkFont.Font(family="Helvetica", size=14)
+button_font = tkFont.Font(family="Helvetica", size=12, weight="bold")
 
 # One stretching column
 window.grid_columnconfigure(0, weight=1)
+window.grid_rowconfigure(2, weight=1)
 
 quote_frame = tk.Frame(window, bg="RoyalBlue2")
 quote_frame.grid(row=0, column=0, sticky="ew")
@@ -87,7 +89,7 @@ fade_in_label(author, author_text)
 
 # Text input box
 input_frame = tk.Frame(window, bg="grey20")
-input_frame.grid(row=1, column=0, sticky="new", padx=20, pady=(0, 20))
+input_frame.grid(row=1, column=0, sticky="new", padx=20)
 input_frame.grid_columnconfigure(0, weight=1)
 input_frame.grid_rowconfigure(1, weight=1)
 
@@ -120,6 +122,54 @@ scroll = tk.Scrollbar(
 scroll.grid(row=1, column=1, sticky="ns")
 
 input_box.config(yscrollcommand=scroll.set)
+
+# Analyze button
+analyze = tk.Button(
+    input_frame,
+    text="Analyze",
+    bg="RoyalBlue2",
+    fg="white",
+    activebackground="RoyalBlue3",
+    activeforeground="#2E2E2E",
+    width=14,
+    height=1,
+    relief="raised",
+    bd=7,
+    cursor="hand2",
+    font=button_font,
+    # command=on_analyze
+)
+analyze.grid(row=2, column=0, pady=15)
+
+# output frame
+output_frame = tk.Frame(window, bg="RoyalBlue2")
+output_frame.grid(row=2, column=0, sticky="nsew")
+
+# make the column expand
+output_frame.grid_columnconfigure(0, weight=1)
+output_frame.grid_rowconfigure(1,  weight=1)
+
+result_lbl = tk.Label(
+    output_frame,
+    text="Basic insights on your text will appear here:",
+    fg="white",
+    bg="RoyalBlue2",
+    font=text_font
+)
+result_lbl.grid(row=0, column=0, sticky="w", pady=10, padx=20)
+
+results_box = tk.Text(
+    output_frame,
+    font=text_font,
+    wrap="word",
+    bd=7,
+    relief="groove",
+    bg="grey63",
+    fg="black",
+    width=45,
+    height=10
+)
+results_box.grid(row=1, column=0, sticky="w")
 
 window.mainloop()
 
