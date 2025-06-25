@@ -102,6 +102,12 @@ def on_right_click(event):
     )
     paste_btn.grid(row=0, column=1, pady=30)
 
+def on_chart_select(choice):
+    if choice != "Home":
+        print("User selected:", choice)
+    else:
+        print("Back on Home")
+
 def on_clear(input_box, output_box):
     # Remove text inside of input box
     input_box.delete("1.0", tk.END)
@@ -286,14 +292,16 @@ clear_btn = tk.Button(
 clear_btn.grid(row=1, column=0, sticky="e", padx=220)
 
 # Graph dropdown
-char_var = tk.StringVar(value="Select Chart")
+chart_var = tk.StringVar(value="Home")
 
 chart_dd = tk.OptionMenu(
     output_frame,
-    char_var,
+    chart_var,
+    "Home",
     "Top Words",
     "Sentences",
-    "Punctuation"
+    "Punctuation",
+    command=on_chart_select
 )
 chart_dd.config(
     bg="RoyalBlue2",
@@ -313,6 +321,10 @@ chart_dd["menu"].config(
     font=button_font
 )
 chart_dd.grid(row=1, column=0, sticky="e", padx=30)
+
+if chart_var.get() != "Home":
+    current_choice = chart_var.get()
+    print("User selected:", current_choice)
 
 window.mainloop()
 
