@@ -4,6 +4,8 @@ import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
 import random
+import re, math
+from collections import Counter
 
 quotes = [
     '"I think, therefore I am ." - René Descartes',
@@ -24,6 +26,24 @@ quotes = [
     '"Hope is a good breakfast." - Francis Bacon',
     '"Facts are stubborn things." - John Adams'
 ]
+
+def on_analyze(input_box, response_box, wpm=200):
+    text = input_box.get("1.0", "end-1c")
+
+    tokens = re.findall(r"\b\w+\b", text.lower())
+    words  = len(tokens)
+    unique = len(set(tokens))
+    ttr    = unique / words if words else 0
+    sentences = re.split(r'[.!?]+', text)
+    sentences = [s for s in sentences if s.strip()]
+    avg_len   = words / len(sentences) if sentences else 0
+    m, s      = divmod(math.ceil(words / wpm * 60), 60)
+
+    response_box.delete("1.0", "end")
+    response_box.insert("end", f"Words: {words:,}    Sentences: {len(sentences)}\n")
+    response_box.insert("end", f"Avg. sentence length: {avg_len:.1f} words\n")
+    response_box.insert("end", f"Unique words: {unique:,} \n")
+    response_box.insert("end", f"Est. reading time: {m} min {s:02d} sec\n")
 
 def fade_in_label(label, text, delay=40):
     for i in range(len(text)):
@@ -137,7 +157,7 @@ analyze = tk.Button(
     bd=7,
     cursor="hand2",
     font=button_font,
-    # command=on_analyze
+    command=lambda: on_analyze(input_box, results_box)
 )
 analyze.grid(row=2, column=0, pady=15)
 
@@ -169,7 +189,7 @@ results_box = tk.Text(
     width=45,
     height=10
 )
-results_box.grid(row=1, column=0, sticky="w")
+results_box.grid(row=1, column=0, sticky="w", pady=(0, 5), padx=5)
 
 window.mainloop()
 
