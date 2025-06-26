@@ -3,9 +3,13 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 import random
 import re, math
 from collections import Counter
+
+graph_canvas = None
 
 quotes = [
     '"I think, therefore I am ." - René Descartes',
@@ -26,6 +30,62 @@ quotes = [
     '"Hope is a good breakfast." - Francis Bacon',
     '"Facts are stubborn things." - John Adams'
 ]
+
+def show_input():
+    global graph_canvas
+    input_box.grid()
+    scroll.grid()
+    analyze.grid()
+
+    # Restore label
+    input_lbl.config(text="")
+    input_lbl.config(text="📝 Paste your text here for analysis:")
+
+    if graph_canvas:
+        graph_canvas.get_tk_widget().grid_remove()
+
+def show_top_words():
+    global graph_canvas
+
+    # Update label
+    input_lbl.config(text="")
+    input_lbl.config(text="📊 Top ten word frequencies in your text:")
+
+    # Data
+    text = input_box.get("1.0", "end-1c").lower()
+    words = re.findall(r"\b\w+\b", text)
+    if not words:
+        return
+    top = Counter(words).most_common(10) or [("none", 0)]
+    labels, counts = zip(*reversed(top))
+
+    input_box.grid_remove()
+    scroll.grid_remove()
+    analyze.grid_remove()
+
+    # Build graph
+    if graph_canvas is None:
+        fig, ax = plt.subplots(figsize=(5, 3))
+        graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
+    else:
+        fig = graph_canvas.figure
+        fig.clear()
+        ax = fig.add_subplot(111)
+
+    ax.barh(labels, counts, color="RoyalBlue")
+    ax.set_xlabel("Frequency")
+    ax.set_title("Top Words")
+    fig.tight_layout()
+    graph_canvas.draw()
+
+    # Place graph
+    graph_canvas.get_tk_widget().grid(
+        row=1,
+        column=0,
+        columnspan=2,
+        sticky="nsew",
+        pady=30
+    )
 
 def on_analyze(input_box, response_box, wpm=200):
     text = input_box.get("1.0", "end-1c")
@@ -102,11 +162,21 @@ def on_right_click(event):
     )
     paste_btn.grid(row=0, column=1, pady=30)
 
+def update_clear_state(event=None):
+    text_present = bool(input_box.get("1.0", "end-1c").strip())
+
+    chart_dd.config(state="normal" if text_present else "disabled")
+
 def on_chart_select(choice):
     if choice != "Home":
         print("User selected:", choice)
     else:
         print("Back on Home")
+
+    if choice == "Home":
+        show_input()
+    elif choice == "Top Words":
+        show_top_words()
 
 def on_clear(input_box, output_box):
     # Remove text inside of input box
@@ -114,6 +184,9 @@ def on_clear(input_box, output_box):
 
     # Remove text inside of ouput_box
     output_box.delete("1.0", tk.END)
+
+    # Disable chart_dd
+    chart_dd.config(state="disabled")
 
 def on_copy(window):
     text = input_box.get("1.0", "end-1c")
@@ -129,6 +202,11 @@ def on_paste(window):
 def fade_in_label(label, text, delay=40):
     for i in range(len(text)):
         window.after(i * delay, lambda i=i: label.config(text=text[:i+1]))
+
+def on_exit():
+    plt.close("all")
+    window.destroy()
+    window.quit()
 
 # Main window setup
 window = tk.Tk()
@@ -222,8 +300,10 @@ scroll = tk.Scrollbar(
     command=input_box.yview
 )
 scroll.grid(row=1, column=1, sticky="ns")
-
 input_box.config(yscrollcommand=scroll.set)
+input_box.bind("<KeyRelease>", update_clear_state)
+input_box.bind("<<Paste>>", update_clear_state)
+input_box.bind("<<Cut>>", update_clear_state)
 
 # Analyze button
 analyze = tk.Button(
@@ -321,10 +401,8 @@ chart_dd["menu"].config(
     font=button_font
 )
 chart_dd.grid(row=1, column=0, sticky="e", padx=30)
+chart_dd.config(state="disabled")
 
-if chart_var.get() != "Home":
-    current_choice = chart_var.get()
-    print("User selected:", current_choice)
-
+window.protocol("WM_DELETE_WINDOW", on_exit)
 window.mainloop()
 
