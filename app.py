@@ -43,6 +43,7 @@ def show_input():
 
     if graph_canvas:
         graph_canvas.get_tk_widget().grid_remove()
+        graph_canvas = None
 
 def show_top_words():
     global graph_canvas
@@ -65,13 +66,14 @@ def show_top_words():
 
     # Build graph
     if graph_canvas is None:
-        fig, ax = plt.subplots(figsize=(5, 3))
+        fig = plt.Figure(figsize=(5, 3))
         graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
     else:
-        fig = graph_canvas.figure
-        fig.clear()
-        ax = fig.add_subplot(111)
+        fig = plt.Figure(figsize=(5, 3))
+        graph_canvas.figure.clf()
+        graph_canvas.figure = fig
 
+    ax = fig.add_subplot(111)
     ax.barh(labels, counts, color="RoyalBlue")
     ax.set_xlabel("Frequency")
     ax.set_title("Top Words")
@@ -79,6 +81,48 @@ def show_top_words():
     graph_canvas.draw()
 
     # Place graph
+    graph_canvas.get_tk_widget().grid(
+        row=1,
+        column=0,
+        columnspan=2,
+        sticky="nsew",
+        pady=30
+    )
+
+def show_sentence_lengths():
+    global graph_canvas
+
+    input_lbl.config(text="📊 Sentence-length distribution (words per sentence)")
+
+    text = input_box.get("1.0", "end-1c")
+    sentences = [s.strip() for s in re.split(r"[.!?]+", text) if s.strip()]
+    if not sentences:
+        return
+
+    lengths = [len(re.findall(r"\b\w+\b", s)) for s in sentences]
+
+    input_box.grid_remove()
+    scroll.grid_remove()
+    analyze.grid_remove()
+
+    if graph_canvas is None:
+        fig = plt.Figure(figsize=(5, 3))
+        graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
+    else:
+        fig = plt.Figure(figsize=(5, 3))
+        graph_canvas.figure.clf()
+        graph_canvas.figure = fig
+
+    # Plot
+    bins = range(1, max(lengths) + 2)
+    ax = fig.add_subplot(111)
+    ax.hist(lengths, bins=bins, color="RoyalBlue", edgecolor="white")
+    ax.set_xlabel("Sentence length (words)")
+    ax.set_ylabel("Number of sentences")
+    ax.set_title("Sentence-Length Distribution")
+    fig.tight_layout()
+    graph_canvas.draw()
+
     graph_canvas.get_tk_widget().grid(
         row=1,
         column=0,
@@ -177,6 +221,9 @@ def on_chart_select(choice):
         show_input()
     elif choice == "Top Words":
         show_top_words()
+    elif choice == "Sentences":
+        show_sentence_lengths()
+
 
 def on_clear(input_box, output_box):
     # Remove text inside of input box
