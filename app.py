@@ -3,6 +3,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
+from pathlib import Path
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import random
@@ -10,6 +11,7 @@ import re, math
 from collections import Counter
 
 graph_canvas = None
+closed = False
 
 quotes = [
     '"I think, therefore I am ." - René Descartes',
@@ -29,6 +31,24 @@ quotes = [
     '"Speak softly and carry a big stick." - Theodore Roosevelt',
     '"Hope is a good breakfast." - Francis Bacon',
     '"Facts are stubborn things." - John Adams'
+]
+
+farewells = [
+    "See you next writing session",
+    "Until next time-keep the words flowing!",
+    "Good-bye! May your ideas stay sharp!",
+    "Thanks for stopping by-happy typing",
+    "Farewell, fellow wordsmith",
+    "Catch you later-keep crafting sentences!",
+    "Safe travels through the realm of prose",
+    "Cheers! Don't forget to save your work",
+    "Signing off-may inspirations strike often!",
+    "Adiós! Your next story awaits",
+    "Good-bye! Keep those commas in line, okay?",
+    "Take care, come back with fresh paragraphs!",
+    "See you soon, creativity champion!",
+    "Bye for now-let the punctuation be with you!",
+    "Exciting... but the narrative continues elseware"
 ]
 
 def show_input():
@@ -318,10 +338,11 @@ def fade_in_label(label, text, delay=40):
     for i in range(len(text)):
         window.after(i * delay, lambda i=i: label.config(text=text[:i+1]))
 
-def on_exit():
+def on_close():
+    global closed
+    closed = True
     plt.close("all")
     window.destroy()
-    window.quit()
 
 # Main window setup
 window = tk.Tk()
@@ -518,6 +539,92 @@ chart_dd["menu"].config(
 chart_dd.grid(row=1, column=0, sticky="e", padx=30)
 chart_dd.config(state="disabled")
 
-window.protocol("WM_DELETE_WINDOW", on_exit)
+window.protocol("WM_DELETE_WINDOW", on_close)
 window.mainloop()
 
+if closed:
+    farewell = tk.Tk()
+    farewell.title("Farewell")
+    farewell.geometry("900x700")
+    farewell.configure(bg="RoyalBlue")
+    farewell.resizable(False, False)
+
+    # Fonts
+    text_font = tkFont.Font(family="Helvetica", size=14)
+    title_font = tkFont.Font(family="Times", size=22, weight="bold")
+
+    message = random.choice(farewells)
+
+    # Farewell label
+    farewell_lbl = tk.Label(
+        farewell,
+        text=message,
+        fg="white",
+        bg="RoyalBlue",
+        font=title_font
+    )
+    farewell_lbl.pack(pady=20)
+
+    logo_path = Path("text-lens-logo.png")
+
+    pil_image = Image.open(logo_path).convert("RGBA")
+
+    target_height = 500
+    scale = target_height / pil_image.height
+    target_width = int(pil_image.width * scale)
+
+    resized_image = pil_image.resize((target_width, target_height),
+                                     Image.Resampling.LANCZOS)
+    logo_image = ImageTk.PhotoImage(resized_image)
+
+    logo_label = tk.Label(
+        farewell,
+        image=logo_image,
+        bg="RoyalBlue"
+    )
+    logo_label.image = logo_image
+    logo_label.pack(pady=20)
+
+    # Countdown
+    # Three
+    three = tk.Label(
+        farewell,
+        text="3 seconds",
+        bg="RoyalBlue",
+        fg="white",
+        font=text_font
+    )
+    farewell.after(1000, lambda: three.pack(pady=20))
+
+    # Two
+    two = tk.Label(
+        farewell,
+        text="2 seconds",
+        bg="RoyalBlue",
+        fg="white",
+        font=text_font
+    )
+    farewell.after(2000, lambda: (three.destroy(), two.pack(pady=20)))
+
+    # One
+    one = tk.Label(
+        farewell,
+        text="1 second",
+        bg="RoyalBlue",
+        fg="white",
+        font=text_font
+    )
+    farewell.after(3000, lambda: (two.destroy(), one.pack(pady=20)))
+
+    # Goodbye
+    goodbye = tk.Label(
+        farewell,
+        text="Goodbye",
+        bg="RoyalBlue",
+        fg="white",
+        font=text_font
+    )
+    farewell.after(4000, lambda: (one.destroy(), goodbye.pack(pady=20)))
+    farewell.after(4500, lambda: farewell.destroy())
+
+    farewell.mainloop()
