@@ -37,6 +37,9 @@ def show_input():
     scroll.grid()
     analyze.grid()
 
+    # Restore clear button
+    clear_btn.config(state="normal")
+
     # Restore label
     input_lbl.config(text="")
     input_lbl.config(text="📝 Paste your text here for analysis:")
@@ -47,6 +50,8 @@ def show_input():
 
 def show_top_words():
     global graph_canvas
+    # Disable clear button
+    clear_btn.config(state="disabled")
 
     # Update label
     input_lbl.config(text="")
@@ -64,14 +69,14 @@ def show_top_words():
     scroll.grid_remove()
     analyze.grid_remove()
 
-    # Build graph
-    if graph_canvas is None:
-        fig = plt.Figure(figsize=(5, 3))
-        graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
-    else:
-        fig = plt.Figure(figsize=(5, 3))
-        graph_canvas.figure.clf()
-        graph_canvas.figure = fig
+    # Clean up existing graph canvas
+    if graph_canvas is not None:
+        graph_canvas.get_tk_widget().destroy()
+        graph_canvas = None
+
+    # Build new graph
+    fig = plt.Figure(figsize=(5, 3))
+    graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
 
     ax = fig.add_subplot(111)
     ax.barh(labels, counts, color="RoyalBlue")
@@ -92,6 +97,9 @@ def show_top_words():
 def show_sentence_lengths():
     global graph_canvas
 
+    # Disable cear button
+    clear_btn.config(state="disabled")
+
     input_lbl.config(text="📊 Sentence-length distribution (words per sentence)")
 
     text = input_box.get("1.0", "end-1c")
@@ -105,13 +113,14 @@ def show_sentence_lengths():
     scroll.grid_remove()
     analyze.grid_remove()
 
-    if graph_canvas is None:
-        fig = plt.Figure(figsize=(5, 3))
-        graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
-    else:
-        fig = plt.Figure(figsize=(5, 3))
-        graph_canvas.figure.clf()
-        graph_canvas.figure = fig
+    # Clean up existing graph canvas
+    if graph_canvas is not None:
+        graph_canvas.get_tk_widget().destroy()
+        graph_canvas = None
+
+    # Build new graph
+    fig = plt.Figure(figsize=(5, 3))
+    graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
 
     # Plot
     bins = range(1, max(lengths) + 2)
@@ -245,6 +254,7 @@ def on_paste(window):
     clipboard = window.clipboard_get()
     input_box.insert("insert", clipboard)
     window.destroy()
+    update_clear_state()
 
 def fade_in_label(label, text, delay=40):
     for i in range(len(text)):
