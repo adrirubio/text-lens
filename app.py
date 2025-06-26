@@ -65,6 +65,7 @@ def show_top_words():
     top = Counter(words).most_common(10) or [("none", 0)]
     labels, counts = zip(*reversed(top))
 
+    # Hide widgets
     input_box.grid_remove()
     scroll.grid_remove()
     analyze.grid_remove()
@@ -100,6 +101,7 @@ def show_sentence_lengths():
     # Disable cear button
     clear_btn.config(state="disabled")
 
+    # Update label
     input_lbl.config(text="📊 Sentence-length distribution (words per sentence)")
 
     text = input_box.get("1.0", "end-1c")
@@ -109,6 +111,7 @@ def show_sentence_lengths():
 
     lengths = [len(re.findall(r"\b\w+\b", s)) for s in sentences]
 
+    # Hide widgets
     input_box.grid_remove()
     scroll.grid_remove()
     analyze.grid_remove()
@@ -122,13 +125,67 @@ def show_sentence_lengths():
     fig = plt.Figure(figsize=(5, 3))
     graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
 
-    # Plot
+    # Build histogram
     bins = range(1, max(lengths) + 2)
     ax = fig.add_subplot(111)
     ax.hist(lengths, bins=bins, color="RoyalBlue", edgecolor="white")
     ax.set_xlabel("Sentence length (words)")
     ax.set_ylabel("Number of sentences")
     ax.set_title("Sentence-Length Distribution")
+    fig.tight_layout()
+    graph_canvas.draw()
+
+    graph_canvas.get_tk_widget().grid(
+        row=1,
+        column=0,
+        columnspan=2,
+        sticky="nsew",
+        pady=30
+    )
+
+def show_punctuation():
+    global graph_canvas
+
+    # Disable clear btn
+    clear_btn.config(state="disabled")
+
+    # Update label
+    input_lbl.config(text="📊 Punctuation breakdown")
+
+    text   = input_box.get("1.0", "end-1c")
+    marks  = {".": "Periods", ",": "Commas", "?": "Questions", "!": "Exclamations"}
+    pairs  = [(label, text.count(sym)) for sym, label in marks.items() if text.count(sym) > 0]
+
+    if not pairs:                        # nothing to show
+        tk.messagebox.showinfo("No punctuation",
+                               "The text contains no . , ? or ! marks.")
+        return
+
+    labels, counts = zip(*pairs)
+
+    # Hide widgets
+    input_box.grid_remove()
+    scroll.grid_remove()
+    analyze.grid_remove()
+
+    # Clean up existing graph canvas
+    if graph_canvas is not None:
+        graph_canvas.get_tk_widget().destroy()
+        graph_canvas = None
+
+    # Build pie chart
+    fig = plt.Figure(figsize=(4.5, 3))
+    graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
+
+    ax = fig.add_subplot(111)
+    ax.pie(
+        counts,
+        labels=labels,
+        autopct=lambda pct: f"{pct:.0f}%" if pct > 3 else "",
+        startangle=90,
+        wedgeprops=dict(edgecolor="white")
+    )
+    ax.set_title("Punctuation Usage")
     fig.tight_layout()
     graph_canvas.draw()
 
@@ -232,7 +289,8 @@ def on_chart_select(choice):
         show_top_words()
     elif choice == "Sentences":
         show_sentence_lengths()
-
+    elif choice == "Punctuation":
+        show_punctuation()
 
 def on_clear(input_box, output_box):
     # Remove text inside of input box
