@@ -86,9 +86,8 @@ def show_top_words():
     labels, counts = zip(*reversed(top))
 
     # Hide widgets
-    input_box.grid_remove()
-    scroll.grid_remove()
-    analyze.grid_remove()
+    for w in input_box, scroll, analyze:
+        w.grid_remove()
 
     # Clean up existing graph canvas
     if graph_canvas is not None:
@@ -118,7 +117,7 @@ def show_top_words():
 def show_sentence_lengths():
     global graph_canvas
 
-    # Disable cear button
+    # Disable clear button
     clear_btn.config(state="disabled")
 
     # Update label
@@ -132,9 +131,8 @@ def show_sentence_lengths():
     lengths = [len(re.findall(r"\b\w+\b", s)) for s in sentences]
 
     # Hide widgets
-    input_box.grid_remove()
-    scroll.grid_remove()
-    analyze.grid_remove()
+    for w in input_box, scroll, analyze:
+        w.grid_remove()
 
     # Clean up existing graph canvas
     if graph_canvas is not None:
@@ -184,9 +182,8 @@ def show_punctuation():
     labels, counts = zip(*pairs)
 
     # Hide widgets
-    input_box.grid_remove()
-    scroll.grid_remove()
-    analyze.grid_remove()
+    for w in input_box, scroll, analyze:
+        w.grid_remove()
 
     # Clean up existing graph canvas
     if graph_canvas is not None:
@@ -585,46 +582,24 @@ if closed:
     logo_label.image = logo_image
     logo_label.pack(pady=20)
 
+    # Label
+    label = tk.Label(
+        farewell,
+        bg="RoyalBlue",
+        fg="white",
+        font=text_font
+    )
+    label.pack(pady=20)
+
     # Countdown
-    # Three
-    three = tk.Label(
-        farewell,
-        text="3 seconds",
-        bg="RoyalBlue",
-        fg="white",
-        font=text_font
-    )
-    farewell.after(1000, lambda: three.pack(pady=20))
+    def countdown(n):
+        if n > 0:
+            label.config(text = f"{n} second{'s' if n != 1 else ''}")
+            farewell.after(1000, lambda: countdown(n - 1))
+        else:
+            label.config(text="Goodbye")
+            farewell.after(1500, farewell.destroy)
 
-    # Two
-    two = tk.Label(
-        farewell,
-        text="2 seconds",
-        bg="RoyalBlue",
-        fg="white",
-        font=text_font
-    )
-    farewell.after(2000, lambda: (three.destroy(), two.pack(pady=20)))
-
-    # One
-    one = tk.Label(
-        farewell,
-        text="1 second",
-        bg="RoyalBlue",
-        fg="white",
-        font=text_font
-    )
-    farewell.after(3000, lambda: (two.destroy(), one.pack(pady=20)))
-
-    # Goodbye
-    goodbye = tk.Label(
-        farewell,
-        text="Goodbye",
-        bg="RoyalBlue",
-        fg="white",
-        font=text_font
-    )
-    farewell.after(4000, lambda: (one.destroy(), goodbye.pack(pady=20)))
-    farewell.after(4500, lambda: farewell.destroy())
+    countdown(3)
 
     farewell.mainloop()
