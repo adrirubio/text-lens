@@ -5,12 +5,15 @@ import tkinter.ttk as ttk
 from PIL import Image, ImageTk
 from pathlib import Path
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from textstat import flesch_kincaid_grade as fk
+from textstat import flesch_reading_ease
 import matplotlib.pyplot as plt
 import random
 import re, math
 from collections import Counter
 
 graph_canvas = None
+stats_lbl = None
 closed = False
 
 quotes = [
@@ -52,7 +55,7 @@ farewells = [
 ]
 
 def show_input():
-    global graph_canvas
+    global graph_canvas, stats_lbl
     input_box.grid()
     scroll.grid()
     analyze.grid()
@@ -64,9 +67,13 @@ def show_input():
     input_lbl.config(text="")
     input_lbl.config(text="📝 Paste your text here for analysis:")
 
-    if graph_canvas:
+    if graph_canvas is not None:
         graph_canvas.get_tk_widget().grid_remove()
         graph_canvas = None
+
+    # Hide advanced stats
+    if stats_lbl is not None:
+        stats_lbl.grid_remove()
 
 def show_top_words():
     global graph_canvas
@@ -214,6 +221,102 @@ def show_punctuation():
         pady=30
     )
 
+def show_advanced_stats():
+    global stats_lbl, graph_canvas
+
+    # Disable clear btn
+    clear_btn.config(state="disabled")
+
+    # Hide widgets
+    for w in input_box, scroll, analyze:
+        w.grid_remove()
+
+    # Clean up existing graph canvas
+    if graph_canvas is not None:
+        graph_canvas.get_tk_widget().destroy()
+        graph_canvas = None
+
+    # Get text
+    text = input_box.get("1.0", "end-1c")
+
+    # Reading level
+    level = fk(text)
+
+    # Test complexity
+    complexity = 100 - flesch_reading_ease(text)
+
+    # Most/least common sentence lengths
+    freq = Counter(
+        len(re.findall(r'\w+', s))
+        for s in re.split(r'[.!?]+', text) if s.strip()
+    )
+
+    most_common = [k for k, v in freq.items() if v == max(freq.values())]
+    least_common = [k for k, v in freq.items() if v == min(freq.values())]
+
+    # Average words per sentences vs 'ideal'
+    sentences = [s for s in re.split(r'[.!?]+', text) if s.strip()]
+    avg = (sum(len(re.findall(r'\w+', s)) for s in sentences) / len(sentences)) if sentences else 0
+    verdict = 'below' if avg < 12 else 'above' if avg > 18 else 'ideal'
+
+    # Punctuation density
+    punct = len(re.findall(r'[.,!?;:]', text))
+    words = len(re.findall(r'\w+', text))
+
+    density = (punct / words * 100) if words else 0
+
+    # Word length distribution
+    dist = Counter(len(w) for w in re.findall(r'\w+', text))
+    total = sum(dist.values()) or 1
+    percentage = {k: round(v / total * 100, 1) for k, v in dist.items()}
+
+    # Lexical diversity
+    tokens = re.findall(r'\w+', text.lower())
+    ttr = (len(set(tokens)) / len(tokens)) if tokens else 0
+
+    # Overused words
+    words = re.findall(r'\w+', text.lower())
+    total = len(words) or 1
+    overused = sorted(
+        (w for w, c in Counter(words).items()
+         if c / total > 0.02),
+        key=lambda w: -words.count(w)
+    )
+
+    # Rare words
+    words = re.findall(r"\w+", text.lower())
+    rare_count = sum(1 for c in Counter(words).values() if c == 1)
+
+    stats_text = (
+        f"Reading level : {level:.1f}\n"
+        f"Text complextiy score : {complexity:.1f}\n"
+        f"Average words/sentence : {avg:.1f} ({verdict})\n"
+        f"Most-common sentence len. : {', '.join(map(str, most_common))}\n"
+        f"Least-common sentence len. : {', '.join(map(str, least_common))}\n"
+        f"Punctuation density : {density:.1f} per 100 words\n"
+        f"Lexical diversity : {ttr:.3f}\n"
+        f"Rare words : {rare_count}\n"
+        f"Overused words : {', '.join(overused)}\n"
+        f"Word-length distribution (%):"
+        + ", ".join(f" {v}%" for k, v in sorted(percentage.items()))
+    )
+
+    if stats_lbl is None:
+        stats_lbl = tk.Label(
+            input_frame,
+            bg="grey63",
+            fg="black",
+            font=text_font,
+            justify="left",
+            anchor="nw",
+            wraplength=820,
+            bd=7,
+            relief="groove"
+        )
+    
+    stats_lbl.config(text=stats_text)
+    stats_lbl.grid(row=1, column=0, columnspan=2, sticky="ew", pady=40)
+
 def on_analyze(input_box, response_box, wpm=200):
     text = input_box.get("1.0", "end-1c")
 
@@ -308,6 +411,8 @@ def on_chart_select(choice):
         show_sentence_lengths()
     elif choice == "Punctuation":
         show_punctuation()
+    elif choice == "Advanced Stats":
+        show_advanced_stats()
 
 def on_clear(input_box, output_box):
     # Remove text inside of input box
@@ -514,6 +619,7 @@ chart_dd = tk.OptionMenu(
     "Top Words",
     "Sentences",
     "Punctuation",
+    "Advanced Stats",
     command=on_chart_select
 )
 chart_dd.config(
@@ -522,7 +628,7 @@ chart_dd.config(
     activebackground="RoyalBlue3",
     activeforeground="#2E2E2E",
     font=button_font,
-    width=10,
+    width=12,
     relief="raised",
     bd=7
 )
