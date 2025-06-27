@@ -1,2 +1,5 @@
 # requirements.txt
+Pillow
+matplotlib
+textstat
 

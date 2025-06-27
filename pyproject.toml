@@ -6,13 +6,13 @@ build_backend = "setuptools.build_meta"
 
 [project]
 name = "text-lens"
-version = "0.1.0"
+version = "1.0.0"
 description = "A text analysis tool"
 author = [{name = "Adrian Rubio Punal", email = "adrian.rubio.punal@gmail.com"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = []
+dependencies = ["Pillow", "matplotlib", "textstat"]
 
 [project.scripts]
 text-lens = "app:main"

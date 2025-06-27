@@ -313,7 +313,6 @@ def show_advanced_stats():
             bd=7,
             relief="groove"
         )
-    
     stats_lbl.config(text=stats_text)
     stats_lbl.grid(row=1, column=0, columnspan=2, sticky="ew", pady=40)
 
