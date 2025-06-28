@@ -11,14 +11,16 @@ import matplotlib.pyplot as plt
 import random
 import re, math
 from collections import Counter
+import tiktoken
 
+enc = tiktoken.get_encoding("cl100k_base")
 graph_canvas = None
 stats_lbl = None
 closed = False
 
 quotes = [
     '"I think, therefore I am ." - René Descartes',
-    '"To be or not to be." - William Shakespear',
+    '"To be or not to be." - William Shakespeare',
     '"Knowledge is power." - Francis Bacon',
     '"Stay hungry, stay foolish." - Steve Jobs',
     '"Time is money." - Benjamin Franklin',
@@ -51,7 +53,7 @@ farewells = [
     "Take care, come back with fresh paragraphs!",
     "See you soon, creativity champion!",
     "Bye for now-let the punctuation be with you!",
-    "Exciting... but the narrative continues elseware"
+    "Exciting... but the narrative continues elsewhere"
 ]
 
 def show_input():
@@ -287,9 +289,13 @@ def show_advanced_stats():
     words = re.findall(r"\w+", text.lower())
     rare_count = sum(1 for c in Counter(words).values() if c == 1)
 
+    # Get OPEN AI token count
+    openai_tokens = len(enc.encode(text))
+    avg_tok_per_sentence = openai_tokens / len(sentences) if sentences else 0
+
     stats_text = (
         f"Reading level : {level:.1f}\n"
-        f"Text complextiy score : {complexity:.1f}\n"
+        f"Text complexity score : {complexity:.1f}\n"
         f"Average words/sentence : {avg:.1f} ({verdict})\n"
         f"Most-common sentence len. : {', '.join(map(str, most_common))}\n"
         f"Least-common sentence len. : {', '.join(map(str, least_common))}\n"
@@ -298,7 +304,10 @@ def show_advanced_stats():
         f"Rare words : {rare_count}\n"
         f"Overused words : {', '.join(overused)}\n"
         f"Word-length distribution (%):"
-        + ", ".join(f" {v}%" for k, v in sorted(percentage.items()))
+        + ', '.join(f" {v}%" for k, v in sorted(percentage.items()))
+        + "\n"
+        f"OpenAI tokens : {openai_tokens:,} "
+        f"(avg {avg_tok_per_sentence:.1f}/sentence)"
     )
 
     if stats_lbl is None:
