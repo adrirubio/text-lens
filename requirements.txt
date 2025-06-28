@@ -1,5 +1,7 @@
 # requirements.txt
-Pillow
+pillow
 matplotlib
 textstat
+vaderSentiment
+tiktoken
 

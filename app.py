@@ -1,18 +1,20 @@
 # app.py
 import tkinter as tk
 import tkinter.font as tkFont
-import tkinter.ttk as ttk
+import tkinter.messagebox as messagebox
+import matplotlib.pyplot as plt
+import random
+import re, math
+import tiktoken
 from PIL import Image, ImageTk
 from pathlib import Path
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from textstat import flesch_kincaid_grade as fk
 from textstat import flesch_reading_ease
-import matplotlib.pyplot as plt
-import random
-import re, math
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from collections import Counter
-import tiktoken
 
+sia = SentimentIntensityAnalyzer()
 enc = tiktoken.get_encoding("cl100k_base")
 graph_canvas = None
 stats_lbl = None
@@ -113,6 +115,7 @@ def show_top_words():
     ax.set_title("Top Words")
     fig.tight_layout()
     graph_canvas.draw()
+    plt.close(fig)
 
     # Place graph
     graph_canvas.get_tk_widget().grid(
@@ -161,6 +164,7 @@ def show_sentence_lengths():
     ax.set_title("Sentence-Length Distribution")
     fig.tight_layout()
     graph_canvas.draw()
+    plt.close(fig)
 
     graph_canvas.get_tk_widget().grid(
         row=1,
@@ -184,7 +188,7 @@ def show_punctuation():
     pairs  = [(label, text.count(sym)) for sym, label in marks.items() if text.count(sym) > 0]
 
     if not pairs:                        # nothing to show
-        tk.messagebox.showinfo("No punctuation",
+        messagebox.showinfo("No punctuation",
                                "The text contains no . , ? or ! marks.")
         return
 
@@ -214,6 +218,57 @@ def show_punctuation():
     ax.set_title("Punctuation Usage")
     fig.tight_layout()
     graph_canvas.draw()
+    plt.close(fig)
+
+    graph_canvas.get_tk_widget().grid(
+        row=1,
+        column=0,
+        columnspan=2,
+        sticky="nsew",
+        pady=30
+    )
+
+def show_sentiment():
+    global graph_canvas
+
+    # Disable clear button
+    clear_btn.config(state="disabled")
+
+    # Update label
+    input_lbl.config(text="📊 Sentiment per sentence")
+
+    # Break text into sentences
+    text = input_box.get("1.0", "end-1c")
+    sentences = [s.strip() for s in re.split(r"[.!?]+", text) if s.strip()]
+    if not sentences:
+        return
+
+    scores = [sia.polarity_scores(s)["compound"] for s in sentences]
+    xs = list(range(1, len(sentences) + 1))
+
+    # Hide widgets
+    for w in (input_box, scroll, analyze):
+        w.grid_remove()
+
+    # Destroy previous figure if any
+    if graph_canvas is not None:
+        graph_canvas.get_tk_widget().destroy()
+        graph_canvas = None
+
+    # Build the chart
+    fig = plt.Figure(figsize=(5, 3))
+    graph_canvas = FigureCanvasTkAgg(fig, master=input_frame)
+
+    ax = fig.add_subplot(111)
+    ax.plot(xs, scores, marker="o")
+    ax.axhline(0, lw=1, ls="--", color="grey")
+    ax.set_xlabel("Sentence #")
+    ax.set_ylabel("Sentiment score")
+    ax.set_ylim(-1.05, 1.05)
+    ax.set_title("Sentiment Trajectory")
+    fig.tight_layout()
+    graph_canvas.draw()
+    plt.close(fig)
 
     graph_canvas.get_tk_widget().grid(
         row=1,
@@ -421,6 +476,8 @@ def on_chart_select(choice):
         show_punctuation()
     elif choice == "Advanced Stats":
         show_advanced_stats()
+    elif choice == "Sentiment":
+        show_sentiment()
 
 def on_clear(input_box, output_box):
     # Remove text inside of input box
@@ -627,6 +684,7 @@ chart_dd = tk.OptionMenu(
     "Top Words",
     "Sentences",
     "Punctuation",
+    "Sentiment",
     "Advanced Stats",
     command=on_chart_select
 )
