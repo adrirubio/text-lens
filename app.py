@@ -33,7 +33,7 @@ quotes = [
     '"The medium is the message." - Marshall McLuhan',
     '"Creativity is intelligence having fun." - Albert Einstein',
     '"Less is more." - Ludwig Mies van der Rohe',
-    '"Good artists copy; great artists steal." - Pablo Picasso',
+    '"Good artists copy, great artists steal." - Pablo Picasso',
     '"Injustice anywhere is a threat." - Martin Luther King Jr.',
     '"Speak softly and carry a big stick." - Theodore Roosevelt',
     '"Hope is a good breakfast." - Francis Bacon',

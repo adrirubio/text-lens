@@ -123,3 +123,33 @@ To launch Text Lens with the F5 key from anywhere on your system
    - **Advanced Stats**: Deep dive into readability metrics
 
 5. **Clear and start over** with the Clear button
+
+## Screenshots
+
+Home:<br>
+![Home](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/home.png)
+
+Copy and Paste:<br>
+![Copy and Paste](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/copy-paste.png)
+
+Basic Insights:<br>
+![Basic Insights](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/basic-insights.png)
+
+Top Words:<br>
+![Top Words](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/top-words.png)
+
+Sentence Length:<br>
+![Sentence Length](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/sentence-length.png)
+
+Punctuation:<br>
+![Punctuation](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/punctuation.png)
+
+Sentiment:<br>
+![Sentiment](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/sentiment.png)
+
+Advanced Stats:<br>
+![Advanced Stats](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/advanced-stats.png)
+
+Goodbye:<br>
+![Goodbye](https://raw.githubusercontent.com/adrirubio/demo-files/main/text-lens-screenshots/goodbye.png)
+
