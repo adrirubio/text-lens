@@ -42,19 +42,17 @@ Watch a quick preview below (GIF)
 ### Prerequisites
 - Python 3.8 or higher
 
-### Install with pip
+### Install from PyPI
 ```bash
-pip install -r https://raw.githubusercontent.com/adrirubio/text-lens/main/requirements.txt
-pip install --index-url https://test.pypi.org/simple/ text-lens
+pip install text-lens
 ```
 
-#### Install with uv
+Or with uv:
 ```bash
-uv pip install -r https://raw.githubusercontent.com/adrirubio/text-lens/main/requirements.txt
-uv pip install --index-url https://test.pypi.org/simple/ text-lens
+uv pip install text-lens
 ```
 
-#### Run the application
+### Run the application
 ```bash
 text-lens
 ```
@@ -67,14 +65,14 @@ text-lens
    cd text-lens
    ```
 
-2. **Install dependencies**
+2. **Install the package**
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
 
 3. **Run the application**
    ```bash
-   python app.py
+   text-lens
    ```
 
 ### Optional: Global Hotkey Setup (F5)
