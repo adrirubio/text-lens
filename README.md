@@ -54,6 +54,11 @@ uv pip install text-lens
 
 ### Run the application
 ```bash
+python -m text_lens.app
+```
+
+Or if `text-lens` command is available:
+```bash
 text-lens
 ```
 
@@ -72,7 +77,7 @@ text-lens
 
 3. **Run the application**
    ```bash
-   text-lens
+   python -m text_lens.app
    ```
 
 ### Optional: Global Hotkey Setup (F5)
@@ -118,7 +123,7 @@ To launch Text Lens with the F5 key from anywhere on your system
 ## Usage
 
 1. **Launch the app** using either:
-    - Direct command: `python app.py`
+    - Direct command: `python -m text_lens.app`
     - F5 hotkey (if daemon is running)
 
 2. **Enter your text** in the large text area
