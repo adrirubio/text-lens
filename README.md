@@ -44,11 +44,13 @@ Watch a quick preview below (GIF)
 
 ### Install with pip
 ```bash
+pip install -r https://raw.githubusercontent.com/adrirubio/text-lens/main/requirements.txt
 pip install --index-url https://test.pypi.org/simple/ text-lens
 ```
 
 #### Install with uv
 ```bash
+uv pip install -r https://raw.githubusercontent.com/adrirubio/text-lens/main/requirements.txt
 uv pip install --index-url https://test.pypi.org/simple/ text-lens
 ```
 
