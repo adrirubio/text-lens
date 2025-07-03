@@ -52,6 +52,7 @@ pip install text-lens
 uv pip install text-lens
 ```
 
+#### Run the application
 ```bash
 text-lens
 ```
