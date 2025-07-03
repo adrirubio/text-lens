@@ -734,7 +734,7 @@ if closed:
     )
     farewell_lbl.pack(pady=20)
 
-    logo_path = Path("text-lens-logo.png")
+    logo_path = Path(__file__).parent / "text-lens-logo.png"
 
     pil_image = Image.open(logo_path).convert("RGBA")
 
@@ -775,3 +775,7 @@ if closed:
     countdown(3)
 
     farewell.mainloop()
+
+def main():
+    """Entry point for the text-lens command."""
+    pass  # The app runs when the module is imported

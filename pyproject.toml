@@ -1,24 +1,33 @@
 # pyproject.toml
-
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build_backend = "setuptools.build_meta"
-
 [project]
 name = "text-lens"
 version = "1.0.0"
 description = "A text analysis tool"
-author = [{name = "Adrian Rubio Punal", email = "adrian.rubio.punal@gmail.com"}]
+authors = [{name = "Adrian Rubio Punal", email = "adrian.rubio.punal@gmail.com"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = ["Pillow", "matplotlib", "textstat"]
 
 [project.scripts]
-text-lens = "app:main"
+text-lens = "text_lens.app:main"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["*"]
-exclude = ["tests*"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/text_lens"]
+
+[tool.hatch.build]
+include = [
+    "src/text_lens/**/*.py",
+    "text-lens-logo.png"
+]
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
 

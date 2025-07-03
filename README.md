@@ -42,7 +42,22 @@ Watch a quick preview below (GIF)
 ### Prerequisites
 - Python 3.8 or higher
 
-### Quick Start
+### Install with pip
+```bash
+pip install text-lens
+```
+
+### Install with uv
+```bash
+uv pip install text-lens
+```
+
+### Run the application
+```bash
+text-lens
+```
+
+### Install from source
 
 1. **Clone the repository**
    ```bash
