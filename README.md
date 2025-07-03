@@ -47,12 +47,11 @@ Watch a quick preview below (GIF)
 pip install text-lens
 ```
 
-### Install with uv
+#### Install with uv
 ```bash
 uv pip install text-lens
 ```
 
-### Run the application
 ```bash
 text-lens
 ```
