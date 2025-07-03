@@ -44,12 +44,12 @@ Watch a quick preview below (GIF)
 
 ### Install with pip
 ```bash
-pip install text-lens
+pip install --index-url https://test.pypi.org/simple/ text-lens
 ```
 
 #### Install with uv
 ```bash
-uv pip install text-lens
+uv pip install --index-url https://test.pypi.org/simple/ text-lens
 ```
 
 #### Run the application
