@@ -1,7 +1,7 @@
 # pyproject.toml
 [project]
 name = "text-lens"
-version = "1.0.0"
+version = "1.0.1"
 description = "A text analysis tool"
 authors = [{name = "Adrian Rubio Punal", email = "adrian.rubio.punal@gmail.com"}]
 license = {text = "MIT"}
@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-text-lens = "text_lens.app:main"
+text-lens = "text_lens.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
