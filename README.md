@@ -47,9 +47,6 @@ Watch a quick preview below (GIF)
 pip install text-lens
 ```
 
-Or with uv:
-```bash
-uv pip install text-lens
 ```
 
 ### Run the application
