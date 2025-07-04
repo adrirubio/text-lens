@@ -47,8 +47,6 @@ Watch a quick preview below (GIF)
 pip install text-lens
 ```
 
-```
-
 ### Run the application
 ```bash
 python -m text_lens
