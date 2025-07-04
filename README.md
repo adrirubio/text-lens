@@ -42,6 +42,17 @@ Watch a quick preview below (GIF)
 ### Prerequisites
 - Python 3.8 or higher
 
+### Install with UV (Recommended)
+UV is a fast Python package installer and resolver.
+
+```bash
+# Install UV if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install text-lens
+uv pip install text-lens
+```
+
 ### Install from PyPI
 ```bash
 pip install text-lens
